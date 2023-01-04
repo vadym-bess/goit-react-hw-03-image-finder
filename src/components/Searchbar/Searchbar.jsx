@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+ccc
 import './searchbar.modale.css';
 
 
