@@ -11,6 +11,9 @@ export class App extends Component {
     status: 'idle',
     showModal: false,
     largeImageUrl: '',
+    page: 1,
+    query: '',
+    loadMore: null,
   };
 
   getLargeImgUrl = imgUrl => {
@@ -35,15 +38,37 @@ export class App extends Component {
     );
   };
 
+  componentDidUpdate(_, prevState) {
+    const { page, query } = this.state;
+
+    if (
+      prevState.page !== this.state.page ||
+      prevState.query !== this.state.query
+    ) {
+      this.setState({ status: 'loading' });
+
+      fetchPictures(query, page)
+        .then(e =>
+          this.setState(prevState => ({
+            pictures: [...prevState.pictures, ...e.hits],
+            status: 'idle',
+            loadMore: 12 - e.hits.length,
+          }))
+        )
+        .catch(error => console.log(error));
+    }
+  }
+
   render() {
-      const { pictures, status, showModal, largeImageUrl } = this.state;
+      const { pictures, status, showModal, largeImageUrl, loadMore } = this.state;
 
     return(
     
     <>
         <Searchbar onSubmit={this.searchResult} />
         {status === 'loading' && <Loader />}
-      <ImageGallery pictures={pictures} onClick={this.getLargeImgUrl} />
+        <ImageGallery pictures={pictures} onClick={this.getLargeImgUrl} />
+        {loadMore === 0 && <Button onClick={this.handleLoadMore} />}
     </>
   );
   }
