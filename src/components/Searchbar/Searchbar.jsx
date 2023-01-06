@@ -1,5 +1,5 @@
-ccc
-import './searchbar.modale.css';
+import React, {Component} from 'react';
+import css from  './searchbar.module.css';
 
 
 export class Searchbar extends Component {
@@ -25,19 +25,19 @@ export class Searchbar extends Component {
     render() {
     const { search } = this.state;
 
-       return ( <header className="Searchbar">
-           <form onSubmit={this.handleSubmit}
-                 className="Search">
+      return (<header className={css.Searchbar}>
+        <form onSubmit={this.handleSubmit}
+          className={css.Search}>
                       <button
-                          className="SearchForm-button"
+            className={css.SearchFormButton}
                           type="submit">
                    
-                          <span className="SearchForm-button-label">Search</span>
+            <span className={css.SearchFormButtonLabel}>Search</span>
                      </button>
 
                <input
                         name="query"
-                        className="SearchForm-input"
+            className={css.SearchFormInput}
                         type="text"
                         autocomplete="off"
                         autofocus

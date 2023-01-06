@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-//import { fetchPictures } from 'services/gallery-api';
-
+import { fetchPictures } from '../Servises/api';
+import './App.module.css';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
-
+import { Loader } from './Loader/Loader';
+import { Button } from './Button/Button';
+import { Modal } from './Modal/Modal';
 
 export class App extends Component {
   state = {
@@ -21,6 +23,8 @@ export class App extends Component {
     this.toggleModal();
   };
 
+
+
    toggleModal = () => {
     this.setState(state => ({
       showModal: !state.showModal,
@@ -28,15 +32,16 @@ export class App extends Component {
   };
 
   searchResult = value => {
-    this.setState({ status: 'loading' });
-
-    fetchPictures(value).then(event =>
-      this.setState({
-        pictures: event.hits,
-        status: 'idle',
-      })
-    );
+    this.setState({ query: value, page: 1, pictures: [], loadMore: null });
   };
+
+  handleLoadMore = () => {
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
+  };
+
+  
 
   componentDidUpdate(_, prevState) {
     const { page, query } = this.state;
@@ -48,11 +53,11 @@ export class App extends Component {
       this.setState({ status: 'loading' });
 
       fetchPictures(query, page)
-        .then(e =>
+        .then(event =>
           this.setState(prevState => ({
-            pictures: [...prevState.pictures, ...e.hits],
+            pictures: [...prevState.pictures, ...event.hits],
             status: 'idle',
-            loadMore: 12 - e.hits.length,
+            loadMore: 12 - event.hits.length,
           }))
         )
         .catch(error => console.log(error));
@@ -64,12 +69,14 @@ export class App extends Component {
 
     return(
     
-    <>
-        <Searchbar onSubmit={this.searchResult} />
-        {status === 'loading' && <Loader />}
-        <ImageGallery pictures={pictures} onClick={this.getLargeImgUrl} />
-        {loadMore === 0 && <Button onClick={this.handleLoadMore} />}
-    </>
+    <div className="App">
+        <Searchbar onSubmit={this.searchResult}/>
+        {showModal && (<Modal imgUrl={largeImageUrl} onClose={this.toggleModal}/>)}
+        <ImageGallery pictures={pictures} onClick={this.getLargeImgUrl}/>
+        {status === 'loading' && <Loader/>}
+        {loadMore === 0 && <Button onClick={this.handleLoadMore}/>}
+        
+    </div>
   );
   }
 };

@@ -1,11 +1,11 @@
 import React from 'react';
-
+import css from './ImageGalleryItem.module.css';
 
 export const ImageGalleryItem = ({ pictures, onClickImg }) => {
   return pictures.map(picture => {
     return (
-      <li key={picture.id}>
-        <img
+      <li className={css.ImageGalleryItem} key={picture.id}>
+        <img className={css.ImageGalleryItemImage}
           onClick={() => {
             onClickImg(picture.largeImageURL);
           }}
